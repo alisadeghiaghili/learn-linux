@@ -7,6 +7,7 @@ build/
 .server-out.log
 .server-err.log
 output-playwright-ui.png
+output-celebrate-share.png
 output/
 output-playwright/
 .playwright-cli/

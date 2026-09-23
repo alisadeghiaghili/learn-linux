@@ -1,7 +1,7 @@
 # learn-linux
 
-Interactive Ubuntu / Linux shell trainer — a filesystem analog of
-[learnGitBranching](https://github.com/pcottle/learnGitBranching).
+Interactive Ubuntu / Linux shell trainer: sandbox terminal, live filesystem
+tree, leveled challenges with command-golf scoring and shareable progress.
 
 Type real shell commands in a sandbox. The **filesystem tree** and **process table**
 update live. Guided levels teach navigation, files, pipes, permissions, and processes,
@@ -36,7 +36,7 @@ Text: `head` `tail` `wc` `grep`
 Perms: `chmod` `chown`  
 Processes: `ps` `kill` `jobs`  
 System: `df` `du` `free` `uname` `which` `man` `whoami` `hostname`  
-Session: `clear` `history` `reset` `undo` `levels` `hint` `sandbox` `help` `solution`
+Session: `clear` `history` `reset` `undo` `levels` `hint` `steps` `curriculum` `sandbox` `help` `solution`
 
 ## URL parameters
 
@@ -57,8 +57,12 @@ js/fs.js       virtual filesystem + processes
 js/parser.js   tokenize, pipes, redirections
 js/commands.js command implementations
 js/shell.js    pipelines, undo, meta commands
-js/levels.js   level catalog + progress
-js/ui.js       terminal, tree, modals
+js/levels.js   LPIC-oriented level catalog
+js/progress.js localStorage + cookie progress, curriculum summary
+js/share.js    LinkedIn / X / Facebook share posts
+js/confetti.js level-clear celebration
+js/solution.js sticky solution checklist
+js/ui.js       terminal, tree, goal panel, modals
 js/app.js      bootstrap
 ```
 
@@ -81,7 +85,9 @@ console.log('smoke ok');
 "
 ```
 
-## Scope (v1)
+## License
+
+Apache License 2.0 — see [LICENSE](./LICENSE).
 
 Simulated Ubuntu userspace — not a real kernel. No networking, no interactive editors,
 simplified `find` and privilege model. Good enough to learn the shell habits that matter.

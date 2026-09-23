@@ -212,6 +212,17 @@ export class ShellSession {
     if (cmd === 'hint') {
       return { stdout: this.hint() + '\n', stderr: '', code: 0 };
     }
+    if (cmd === 'steps' || cmd === 'next') {
+      // UI also renders the checklist; terminal version for muscle memory.
+      return { stdout: 'See the Goal checklist in the right panel (or the Steps button).\n', stderr: '', code: 0 };
+    }
+    if (cmd === 'curriculum') {
+      return {
+        stdout: 'Type `levels` or open Levels — progress is saved and included in share posts.\n',
+        stderr: '',
+        code: 0,
+      };
+    }
     if (cmd === 'sandbox') {
       this.enterSandbox();
       return { stdout: 'Sandbox mode. Free play — no win condition.\n', stderr: '', code: 0 };

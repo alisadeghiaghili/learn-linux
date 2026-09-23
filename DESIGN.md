@@ -2,7 +2,7 @@
 
 ## Product goal
 
-An interactive Ubuntu/Linux CLI trainer modeled after [learnGitBranching](https://github.com/pcottle/learnGitBranching):
+An interactive Ubuntu/Linux CLI trainer:
 a browser sandbox + leveled challenges where the learner types real shell commands and watches a live filesystem visualization update.
 
 ## Style anchor
@@ -67,14 +67,14 @@ Sequences (tabs conceptually):
 5. **processes** — ps, kill
 6. **system** — find, df, du, uname, env
 
-## Visualization mapping (git tree → linux)
+## Visualization mapping
 
-| learnGitBranching | learn-linux |
-|-------------------|-------------|
-| commit graph | filesystem tree |
-| HEAD / branch labels | cwd badge + highlight |
-| remote refs | process table (side panel) |
-| command golf | same (best score vs par) |
+| Concept | learn-linux |
+|---------|-------------|
+| System state graph | filesystem tree |
+| CWD | highlight + breadcrumb |
+| Side channel | process table |
+| Scoring | command golf (best vs par) |
 
 ## Architecture
 

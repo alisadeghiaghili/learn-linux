@@ -4,7 +4,8 @@
 
 import { ShellSession } from './shell.js';
 import { UI } from './ui.js';
-import { getLevel, loadProgress, levels, sequences, levelsIn } from './levels.js';
+import { getLevel, levels, sequences, levelsIn } from './levels.js';
+import { loadProgress } from './progress.js';
 
 /**
  * Read URL params.
@@ -58,7 +59,7 @@ function boot() {
     ui.openModal(`
       <div class="modal-head"><h2>learn-linux</h2></div>
       <div class="modal-body">
-        <p>An interactive Ubuntu / Linux shell trainer — modeled after learnGitBranching.</p>
+        <p>An interactive Ubuntu / Linux shell trainer with a live filesystem tree.</p>
         <p>Type real commands and watch the <strong>filesystem tree</strong> update live.</p>
         <ul class="modal-list">
           <li><code>levels</code> or the toolbar — guided challenges with command golf</li>

@@ -8,5 +8,5 @@
     "start": "python -m http.server 5173",
     "test": "node js/smoke.js && node js/smoke-bundle.js"
   },
-  "license": "MIT"
+  "license": "Apache-2.0"
 }

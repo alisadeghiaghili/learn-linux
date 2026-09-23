@@ -7,7 +7,8 @@ import { ShellSession } from './shell.js';
 import { VirtualFS, defaultTree, formatMode, normalizePath, splitPath } from './fs.js';
 import { parseLine, tokenize, splitStatements, globToRegExp } from './parser.js';
 import { commands, metaCommands } from './commands.js';
-import { levels, sequences, levelsIn, getLevel, loadProgress, recordWin } from './levels.js';
+import { levels, sequences, levelsIn, getLevel } from './levels.js';
+import { loadProgress, recordWin } from './progress.js';
 import { runDemo } from './shell.js';
 
 function assert(cond, msg) {

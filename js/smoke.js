@@ -7,6 +7,9 @@ import { VirtualFS, defaultTree } from './fs.js';
 import { parseLine, tokenize } from './parser.js';
 import { ShellSession } from './shell.js';
 import { levels } from './levels.js';
+import { loadProgress, recordWin, summarizeCurriculum } from './progress.js';
+import { buildShareTargets, shareMessageLinkedIn, SHARE_URL } from './share.js';
+import { solutionProgress, currentStepIndex } from './solution.js';
 
 function assert(cond, msg) {
   if (!cond) throw new Error(msg);
@@ -79,3 +82,39 @@ const sh = s.fs.get('/home/ubuntu/shared.txt');
 assert((sh.mode & 0o200) && !(sh.mode & 0o020) && !(sh.mode & 0o002), 'symbolic go-w got ' + sh.mode.toString(8));
 
 console.log('SMOKE OK');
+
+// Share + curriculum + sticky checklist
+const progress = recordWin('intro-pwd', 1, 1);
+const summary = summarizeCurriculum(loadProgress());
+assert(summary.solvedCount >= 1, 'curriculum solvedCount');
+assert(summary.learned.some((l) => l.id === 'intro-pwd'), 'curriculum learned list');
+
+const targets = buildShareTargets({
+  levelName: 'Where am I?',
+  levelId: 'intro-pwd',
+  commands: 1,
+  par: 1,
+  curriculum: summary,
+});
+assert(targets.linkedin.includes('linkedin.com/shareArticle'), 'linkedin url');
+assert(targets.x.includes('twitter.com/intent/tweet'), 'x url');
+assert(targets.facebook.includes('facebook.com/sharer'), 'facebook url');
+assert(targets.text.includes('Where am I?') || targets.text.includes('learned so far'), 'linkedin body');
+assert(targets.text.includes(SHARE_URL) || targets.text.includes('learn-linux'), 'share link in body');
+assert(shareMessageLinkedIn({
+  levelName: 'x',
+  levelId: 'x',
+  commands: 2,
+  par: 1,
+  curriculum: summary,
+}).includes('What I have learned so far:'), 'linkedin curriculum section');
+
+const ss = new ShellSession({});
+ss.enterSandbox();
+ss.exec('pwd');
+const lv = levels.find((l) => l.id === 'intro-pwd');
+const steps = solutionProgress(ss, lv);
+assert(steps[0].done === true, 'sticky step done');
+assert(currentStepIndex(steps) === -1, 'all steps complete');
+
+console.log('SHARE+PROGRESS OK');
