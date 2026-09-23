@@ -1,0 +1,12 @@
+{
+  "name": "learn-linux",
+  "version": "1.0.0",
+  "description": "Interactive Ubuntu/Linux shell trainer with live filesystem visualization",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "python -m http.server 5173",
+    "test": "node js/smoke.js && node js/smoke-bundle.js"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,23 @@
+# Dependencies / build
+node_modules/
+dist/
+build/
+
+# Local servers and test artifacts
+.server-out.log
+.server-err.log
+output-playwright-ui.png
+output/
+output-playwright/
+.playwright-cli/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# Env
+.env
+.env.*
