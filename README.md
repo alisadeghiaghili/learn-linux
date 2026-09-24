@@ -22,7 +22,7 @@ Or open via any static host / editor preview that serves the directory root.
 ## Features
 
 - **Sandbox** — free play with `undo`, `reset`, `help`
-- **109 levels** in 12 sequences: intro, files, text/filters, permissions, admin,
+- **123 levels** in 12 sequences: intro, files, text/filters, permissions, admin,
   processes, filesystems/devices, packages, networking, security, services, shell
 - **LPIC-oriented depth** — objective, learn notes, common mistakes, sticky checklist
 - **Command golf** — best count vs par (localStorage + cookie)

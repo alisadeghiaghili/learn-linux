@@ -16,6 +16,7 @@ import {
   shellLevels,
 } from './levels-advanced.js';
 import { gapLevels } from './levels-gap.js';
+import { polishLevels } from './levels-polish.js';
 
 export { homeTreeSpec as homeTree };
 
@@ -33,6 +34,7 @@ export const levels = [
   ...svcLevels,
   ...shellLevels,
   ...gapLevels,
+  ...polishLevels,
 ];
 
 /** @type {{id: string, name: string, about: string}[]} */
