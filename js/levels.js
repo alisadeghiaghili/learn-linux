@@ -17,11 +17,12 @@ import {
 } from './levels-advanced.js';
 import { gapLevels } from './levels-gap.js';
 import { polishLevels } from './levels-polish.js';
+import { enrichLevels } from './levels-enrich.js';
 
 export { homeTreeSpec as homeTree };
 
 /** @type {any[]} */
-export const levels = [
+export const levels = enrichLevels([
   ...coreLevels,
   ...textLevels,
   ...permLevels,
@@ -35,7 +36,7 @@ export const levels = [
   ...shellLevels,
   ...gapLevels,
   ...polishLevels,
-];
+]);
 
 /** @type {{id: string, name: string, about: string}[]} */
 export const sequences = [
