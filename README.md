@@ -22,21 +22,26 @@ Or open via any static host / editor preview that serves the directory root.
 ## Features
 
 - **Sandbox** — free play with `undo`, `reset`, `help`
-- **Levels** — sequences: Introduction, Files, Text & pipes, Permissions, Processes, System
-- **Command golf** — track your best command count vs par (localStorage)
-- **Live visualization** — tree of `/` with cwd highlight + process table
-- **Pipes and redirection** — `|`, `>`, `>>`, `<`, `;`
-- **Authentic errors** — Ubuntu-style messages (`No such file or directory`, `Permission denied`)
+- **88 levels** in 12 sequences: intro, files, text/filters, permissions, admin,
+  processes, filesystems/devices, packages, networking, security, services, shell
+- **LPIC-oriented depth** — objective, learn notes, common mistakes, sticky checklist
+- **Command golf** — best count vs par (localStorage + cookie)
+- **Celebration + share** — LinkedIn / X / Facebook posts include your curriculum
+- **Live visualization** — FS tree with neon current step + process table
+- **Shell habits** — pipes, redirection, Tab word completion, history
 
-## Commands
+## Commands (selection)
 
-Navigation: `pwd` `ls` `cd` `find`  
-Files: `mkdir` `rmdir` `touch` `rm` `cp` `mv` `cat` `echo`  
-Text: `head` `tail` `wc` `grep`  
-Perms: `chmod` `chown`  
-Processes: `ps` `kill` `jobs`  
-System: `df` `du` `free` `uname` `which` `man` `whoami` `hostname`  
-Session: `clear` `history` `reset` `undo` `levels` `hint` `steps` `curriculum` `sandbox` `help` `solution`
+Navigation: `pwd` `ls` `cd` `find` `stat`  
+Files: `mkdir` `touch` `rm` `cp` `mv` `cat` `echo` `ln` `tee`  
+Text: `head` `tail` `wc` `grep` `sort` `uniq` `cut` `sed` `awk` `tr` `diff`  
+Perms/users: `chmod` `chown` `id` `useradd` `usermod` `passwd` `su` `sudo`  
+Processes: `ps` `top` `kill` `killall` `jobs`  
+System: `df` `du` `mount` `lsblk` `uname` `dmesg` `which` `man`  
+Packages: `apt` `dpkg`  
+Network: `ip` `ifconfig` `ss` `ping` `curl` `nslookup`  
+Services: `systemctl` `journalctl` `crontab`  
+Session: `clear` `history` `reset` `undo` `levels` `hint` `steps` `curriculum` `sandbox` `help`
 
 ## URL parameters
 
@@ -53,17 +58,21 @@ Example: `/?NODEMO&level=files-mkdir`
 ```text
 index.html
 css/styles.css
-js/fs.js       virtual filesystem + processes
-js/parser.js   tokenize, pipes, redirections
-js/commands.js command implementations
-js/shell.js    pipelines, undo, meta commands
-js/levels.js   LPIC-oriented level catalog
-js/progress.js localStorage + cookie progress, curriculum summary
-js/share.js    LinkedIn / X / Facebook share posts
-js/confetti.js level-clear celebration
-js/solution.js sticky solution checklist
-js/ui.js       terminal, tree, goal panel, modals
-js/app.js      bootstrap
+js/fs.js               virtual filesystem + processes + runtime state
+js/parser.js           tokenize, pipes, redirections
+js/commands.js         core commands
+js/commands-extra.js   text tools, users, net, packages, services
+js/shell.js            pipelines, undo, meta
+js/levels.js           catalog index
+js/levels-core.js      intro + files
+js/levels-text.js      filters & streams
+js/levels-advanced.js  permissions, admin, proc, fs, pkg, net, security, services, shell
+js/progress.js         persistence + curriculum summary
+js/share.js            social share posts
+js/confetti.js         celebration
+js/solution.js         sticky checklist
+js/ui.js               terminal, tree, goal panel
+js/app.js              bootstrap
 ```
 
 See [DESIGN.md](./DESIGN.md) for visual system and level model.

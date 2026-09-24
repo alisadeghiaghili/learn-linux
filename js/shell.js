@@ -311,6 +311,18 @@ export class ShellSession {
       let result;
       try {
         result = fn(ctx, stage.argv.slice(1), inputText);
+        if (result && result.rerun) {
+          this.fs.sudoOk = true;
+          const reParsed = parseLine(result.rerun);
+          if (Array.isArray(reParsed) && reParsed[0]) {
+            const reName = reParsed[0].stages[0].argv[0];
+            const reFn = commands[reName];
+            if (reFn) {
+              result = reFn(ctx, reParsed[0].stages[0].argv.slice(1), inputText);
+            }
+          }
+          this.fs.sudoOk = false;
+        }
       } catch (e) {
         result = { stdout: '', stderr: `${e.message}\n`, code: 1 };
       }

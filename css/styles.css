@@ -464,6 +464,14 @@ body {
   color: var(--ink);
 }
 
+.mistake-list {
+  margin: 0;
+  padding-left: 16px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--danger);
+}
+
 .learn-list li {
   margin-bottom: 4px;
 }

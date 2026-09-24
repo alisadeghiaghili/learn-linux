@@ -102,6 +102,16 @@ export class VirtualFS {
       ...(opts.env || {}),
     };
     this._nextPid = 100;
+    /** Simulated admin/runtime state (users, packages, services). */
+    this.runtime = {
+      users: [
+        { name: 'root', uid: 0, gid: 0, groups: ['root'], home: '/root', shell: '/bin/bash' },
+        { name: this.user, uid: 1000, gid: 1000, groups: [this.user, 'sudo'], home: `/home/${this.user}`, shell: '/bin/bash' },
+      ],
+      packages: ['bash', 'coreutils', 'grep', 'sudo', 'systemd', 'apt'],
+      services: { ssh: 'active', cron: 'active', nginx: 'inactive' },
+    };
+    this.sudoOk = false;
     this.seed(opts.treeSpec || defaultTree(this.user));
   }
 

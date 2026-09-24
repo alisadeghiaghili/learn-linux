@@ -120,10 +120,54 @@ const BASE_COMMANDS = [
   'df',
   'ps',
   'jobs',
+  'top',
   'true',
   'false',
   'echo $HOME',
   'echo $PATH',
+  'id',
+  'sort names.txt',
+  'uniq -c',
+  'cut -d: -f1 /etc/passwd',
+  "sed 's/red/green/' colors.txt",
+  "awk '{print $1}' report.tsv",
+  'echo done | tee status.txt',
+  'ln notes.txt notes-hard',
+  'ln -s notes.txt notes-soft',
+  'stat notes.txt',
+  'mount',
+  'lsblk',
+  'dmesg',
+  'uname -a',
+  'sudo apt update',
+  'sudo apt install curl',
+  'sudo apt remove curl',
+  'apt list --installed',
+  'apt policy bash',
+  'dpkg -l',
+  'ip addr',
+  'ip route',
+  'ss',
+  'ping -c 2 127.0.0.1',
+  'curl http://localhost/',
+  'cat /etc/hosts',
+  'nslookup localhost',
+  'ifconfig',
+  'sudo useradd alice',
+  'sudo usermod -aG sudo alice',
+  'passwd',
+  'crontab -l',
+  'systemctl status ssh',
+  'sudo systemctl start nginx',
+  'sudo systemctl stop nginx',
+  'sudo systemctl enable nginx',
+  'systemctl list-units',
+  'journalctl -u ssh',
+  'which ls',
+  'man ls',
+  'cat /etc/passwd',
+  'cat /etc/group',
+  'cat /var/log/auth.log',
   'help',
   'hint',
   'steps',
@@ -594,6 +638,9 @@ export class UI {
     const learn = (level.learn || [])
       .map((l) => `<li>${md(l)}</li>`)
       .join('');
+    const mistakes = (level.mistakes || [])
+      .map((m) => `<li>${esc(m)}</li>`)
+      .join('');
     const items = steps
       .map((s, i) => {
         const cls = s.done ? 'is-done' : i === cur ? 'is-current' : '';
@@ -614,6 +661,7 @@ export class UI {
         <ol class="sol-steps">${items}</ol>
         <div class="goal-kicker">Why this matters</div>
         <ul class="learn-list">${learn}</ul>
+        ${mistakes ? `<div class="goal-kicker">Common mistakes</div><ul class="mistake-list">${mistakes}</ul>` : ''}
       </div>
     `;
   }

@@ -7,6 +7,7 @@
 
 import { formatMode, splitPath } from './fs.js';
 import { globToRegExp } from './parser.js';
+import { extraCommands } from './commands-extra.js';
 
 /**
  * @typedef {Object} CmdResult
@@ -416,8 +417,8 @@ export const commands = {
   chown(ctx, argv) {
     const args = argv.filter((a) => !a.startsWith('-'));
     if (args.length < 2) return fail('chown: missing operand');
-    // require root for honesty
-    if (ctx.fs.user !== 'root') {
+    // require root (or elevated sudo) for honesty
+    if (ctx.fs.user !== 'root' && !ctx.fs.sudoOk) {
       return fail(`chown: changing ownership of '${args[1]}': Operation not permitted`);
     }
     const ownerSpec = args[0];
@@ -567,6 +568,8 @@ export const commands = {
     return fail('', 1);
   },
 };
+
+Object.assign(commands, extraCommands);
 
 /** Meta commands handled by the shell session (not pure fs). */
 export const metaCommands = new Set([
