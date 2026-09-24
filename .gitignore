@@ -22,3 +22,4 @@ Thumbs.db
 # Env
 .env
 .env.*
+scripts/fix_levels_quotes.py
