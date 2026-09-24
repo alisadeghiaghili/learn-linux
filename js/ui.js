@@ -879,6 +879,48 @@ export class UI {
             if (out) out.textContent = result.stdout || result.stderr || '(no output)';
           });
         }
+      } else if (step.type === 'quiz') {
+        const choices = (step.choices || [])
+          .map(
+            (c, i) =>
+              `<button type="button" class="btn quiz-choice" data-choice="${i}">${esc(c)}</button>`
+          )
+          .join('');
+        this.openModal(`
+          <div class="modal-head"><h2>${esc(step.title || 'Drill')}</h2></div>
+          <div class="modal-body">
+            ${md(step.body || '')}
+            <div class="quiz-choices">${choices}</div>
+            <p class="quiz-feedback" data-quiz-fb hidden></p>
+          </div>
+          <div class="modal-foot">
+            <span class="muted">${idx + 1} / ${steps.length}</span>
+            <button type="button" class="btn btn-accent" data-next disabled>Continue</button>
+          </div>
+        `);
+        const nextBtn = this.el.modalRoot.querySelector('[data-next]');
+        this.el.modalRoot.querySelectorAll('[data-choice]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const pick = Number(btn.getAttribute('data-choice'));
+            const fb = this.el.modalRoot.querySelector('[data-quiz-fb]');
+            if (pick === step.correct) {
+              this.session.quizOk = true;
+              if (fb) {
+                fb.hidden = false;
+                fb.className = 'quiz-feedback ok';
+                fb.textContent = 'Correct — that is the right mental model.';
+              }
+              if (nextBtn) nextBtn.disabled = false;
+            } else {
+              this.session.quizOk = false;
+              if (fb) {
+                fb.hidden = false;
+                fb.className = 'quiz-feedback bad';
+                fb.textContent = 'Not quite. Re-read the prompt and try again.';
+              }
+            }
+          });
+        });
       }
       const next = this.el.modalRoot.querySelector('[data-next]');
       if (next) {

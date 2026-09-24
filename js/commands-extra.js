@@ -143,7 +143,8 @@ export const extraCommands = {
   },
 
   sed(ctx, argv, stdin) {
-    // sed 's/foo/bar/' or s/foo/bar/g
+    // sed 's/foo/bar/' | sed -i 's/foo/bar/' file
+    const inplace = argv.some((a) => a === '-i' || a.startsWith('-i'));
     const script = argv.find((a) => !a.startsWith('-') && /[s\/]/.test(a));
     const files = argv.filter((a) => !a.startsWith('-') && a !== script);
     let text = stdin || '';
@@ -156,7 +157,16 @@ export const extraCommands = {
     const m = script.match(/^s\/(.*)\/(.*)\/([g]?)$/);
     if (!m) return fail('sed: unsupported script (use s/pat/rep/)');
     const re = new RegExp(m[1], m[3] ? 'g' : '');
-    return ok(text.replace(re, m[2]));
+    const out = text.replace(re, m[2]);
+    if (inplace && files.length) {
+      const n = ctx.fs.get(ctx.fs.resolve(files[0]));
+      if (n) {
+        n.content = out;
+        n.mtime = Date.now();
+      }
+      return ok('');
+    }
+    return ok(out);
   },
 
   awk(ctx, argv, stdin) {

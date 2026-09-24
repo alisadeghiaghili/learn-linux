@@ -464,6 +464,25 @@ body {
   color: var(--ink);
 }
 
+.quiz-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.quiz-choice {
+  text-align: left;
+}
+
+.quiz-feedback.ok {
+  color: var(--success);
+}
+
+.quiz-feedback.bad {
+  color: var(--danger);
+}
+
 .mistake-list {
   margin: 0;
   padding-left: 16px;

@@ -8,6 +8,7 @@
 import { formatMode, splitPath } from './fs.js';
 import { globToRegExp } from './parser.js';
 import { extraCommands } from './commands-extra.js';
+import { mergeGapCommands } from './commands-gap.js';
 
 /**
  * @typedef {Object} CmdResult
@@ -570,6 +571,7 @@ export const commands = {
 };
 
 Object.assign(commands, extraCommands);
+mergeGapCommands(commands);
 
 /** Meta commands handled by the shell session (not pure fs). */
 export const metaCommands = new Set([
