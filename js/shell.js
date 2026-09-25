@@ -5,6 +5,7 @@
 import { VirtualFS, defaultTree } from './fs.js';
 import { parseLine, splitStatements } from './parser.js';
 import { commands, metaCommands } from './commands.js';
+import { runScript } from './interp.js';
 
 /**
  * @typedef {Object} ExecLine
@@ -175,6 +176,13 @@ export class ShellSession {
         continue;
       }
       for (const pipeline of parsed) {
+        // Prefix assignments: FOO=bar cmd …
+        const argv0 = pipeline.stages[0]?.argv || [];
+        while (argv0.length > 1 && /^[A-Za-z_][A-Za-z0-9_]*=/.test(argv0[0])) {
+          const eq = argv0[0].indexOf('=');
+          this.fs.env[argv0[0].slice(0, eq)] = argv0[0].slice(eq + 1);
+          argv0.shift();
+        }
         const outcome = this._runPipeline(pipeline.stages, stmt);
         results.push({ input: stmt, prompt, ...outcome });
         this.commandCount += 1;
@@ -278,6 +286,51 @@ export class ShellSession {
           mutated,
         };
       }
+
+      // Scripts: ./file.sh  or  bash|sh file.sh
+      const isBashSh = name === 'bash' || name === 'sh';
+      const scriptPath = name.startsWith('./')
+        ? name.slice(2)
+        : isBashSh
+          ? stage.argv[1]
+          : null;
+      if (scriptPath && !scriptPath.startsWith('-')) {
+        const abs = this.fs.resolve(scriptPath);
+        const node = this.fs.get(abs);
+        if (!node || node.type !== 'file') {
+          return {
+            stdout,
+            stderr: `bash: ${scriptPath}: No such file or directory\n`,
+            code: 127,
+            mutated,
+          };
+        }
+        const args = (name.startsWith('./') ? stage.argv.slice(1) : stage.argv.slice(2)).filter(
+          (a) => !a.startsWith('-')
+        );
+        const result = runScript(
+          node.content || '',
+          {
+            exec: (line) => {
+              const parsed = parseLine(line);
+              if (!Array.isArray(parsed) || !parsed[0]) {
+                return { stdout: '', stderr: `parse error: ${line}\n`, code: 2 };
+              }
+              const out = this._runPipeline(parsed[0].stages, line);
+              return { stdout: out.stdout || '', stderr: out.stderr || '', code: out.code ?? 0 };
+            },
+            fs: this.fs,
+          },
+          args
+        );
+        return {
+          stdout: result.stdout,
+          stderr: result.stderr,
+          code: result.code,
+          mutated: true,
+        };
+      }
+
       const fn = commands[name];
       if (!fn) {
         return {

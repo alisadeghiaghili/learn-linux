@@ -23,3 +23,4 @@ Thumbs.db
 .env
 .env.*
 scripts/fix_levels_quotes.py
+js/debug-*.js

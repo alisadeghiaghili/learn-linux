@@ -92,14 +92,9 @@ export const commands = {
   },
 
   echo(ctx, argv) {
-    // strip simple VAR=value prefix assignments
-    let i = 0;
-    while (i < argv.length && /^[A-Za-z_][A-Za-z0-9_]*=/.test(argv[i])) {
-      const eq = argv[i].indexOf('=');
-      ctx.fs.env[argv[i].slice(0, eq)] = argv[i].slice(eq + 1);
-      i += 1;
-    }
-    const args = argv.slice(i);
+    // Prefix assignments (FOO=bar cmd) are handled at the shell level, not here.
+    // `echo i=1` must print i=1 (bash behavior).
+    const args = [...argv];
     let n = false;
     if (args[0] === '-n') {
       n = true;

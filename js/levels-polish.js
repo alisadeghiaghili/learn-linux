@@ -187,7 +187,7 @@ export const polishLevels = [
         1
       ),
     ],
-    check: (fs, session) => session.quizOk === true || session.history.some((h) => /true/.test(h)),
+    check: (fs, session) => session.quizOk === true,
   },
   {
     id: 'text-quiz',
@@ -209,7 +209,7 @@ export const polishLevels = [
         1
       ),
     ],
-    check: (fs, session) => session.quizOk === true || session.history.some((h) => /true/.test(h)),
+    check: (fs, session) => session.quizOk === true,
   },
   {
     id: 'perm-quiz',
@@ -231,7 +231,7 @@ export const polishLevels = [
         1
       ),
     ],
-    check: (fs, session) => session.quizOk === true || session.history.some((h) => /true/.test(h)),
+    check: (fs, session) => session.quizOk === true,
   },
   {
     id: 'fs-quiz',
@@ -253,7 +253,7 @@ export const polishLevels = [
         1
       ),
     ],
-    check: (fs, session) => session.quizOk === true || session.history.some((h) => /true/.test(h)),
+    check: (fs, session) => session.quizOk === true,
   },
   {
     id: 'pkg-quiz',
@@ -275,7 +275,7 @@ export const polishLevels = [
         1
       ),
     ],
-    check: (fs, session) => session.quizOk === true || session.history.some((h) => /true/.test(h)),
+    check: (fs, session) => session.quizOk === true,
   },
   {
     id: 'svc-quiz',
@@ -297,7 +297,7 @@ export const polishLevels = [
         2
       ),
     ],
-    check: (fs, session) => session.quizOk === true || session.history.some((h) => /true/.test(h)),
+    check: (fs, session) => session.quizOk === true,
   },
   {
     id: 'proc-quiz',
@@ -319,7 +319,7 @@ export const polishLevels = [
         2
       ),
     ],
-    check: (fs, session) => session.quizOk === true || session.history.some((h) => /true/.test(h)),
+    check: (fs, session) => session.quizOk === true,
   },
   {
     id: 'sec-quiz-2',
@@ -341,6 +341,6 @@ export const polishLevels = [
         1
       ),
     ],
-    check: (fs, session) => session.quizOk === true || session.history.some((h) => /true/.test(h)),
+    check: (fs, session) => session.quizOk === true,
   },
 ];

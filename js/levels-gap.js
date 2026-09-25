@@ -3,6 +3,7 @@
  */
 
 import { homeTreeSpec } from './levels-core.js';
+import { runScript } from './interp.js';
 
 const homeTree = homeTreeSpec;
 const modal = (title, body) => ({ type: 'modal', title, body });
@@ -47,7 +48,17 @@ export const gapLevels = [
     ],
     check: (fs) => {
       const n = fs.get('/home/ubuntu/loop.sh');
-      return !!n && (n.mode & 0o100) !== 0 && /while\s/.test(n.content || '');
+      if (!n || !(n.mode & 0o100) || !/while\s/.test(n.content || '')) return false;
+      // Dry-run the interpreter: record touch targets without mutating fs.
+      const touched = [];
+      runScript(n.content || '', {
+        exec: (line) => {
+          const parts = line.trim().split(/\s+/);
+          if (parts[0] === 'touch' && parts[1]) touched.push(parts[1]);
+          return { stdout: '', stderr: '', code: 0 };
+        },
+      });
+      return touched.includes('f1.txt') && touched.includes('f2.txt');
     },
   },
   {
@@ -79,7 +90,20 @@ export const gapLevels = [
     ],
     check: (fs) => {
       const n = fs.get('/home/ubuntu/cmd.sh');
-      return !!n && /case\s/.test(n.content || '') && /esac/.test(n.content || '');
+      if (!n || !(n.mode & 0o100) || !/case\s/.test(n.content || '') || !/esac/.test(n.content || ''))
+        return false;
+      const touched = [];
+      runScript(
+        n.content || '',
+        {
+          exec: (line) => {
+            if (/touch|echo/.test(line)) touched.push(line);
+            return { stdout: '', stderr: '', code: 0 };
+          },
+        },
+        ['start']
+      );
+      return touched.length > 0;
     },
   },
   {
@@ -105,7 +129,15 @@ export const gapLevels = [
     dialog: [modal('functions', 'Write **`fn.sh`** that defines `greet()` and calls it. Make it executable.')],
     check: (fs) => {
       const n = fs.get('/home/ubuntu/fn.sh');
-      return !!n && /\w+\(\)\s*\{/.test(n.content || '') && (n.mode & 0o100) !== 0;
+      if (!n || !(n.mode & 0o100) || !/\w+\(\)\s*\{/.test(n.content || '')) return false;
+      const touched = [];
+      runScript(n.content || '', {
+        exec: (line) => {
+          if (/touch|echo/.test(line)) touched.push(line);
+          return { stdout: '', stderr: '', code: 0 };
+        },
+      });
+      return touched.length > 0;
     },
   },
   {
@@ -163,7 +195,7 @@ export const gapLevels = [
         1
       ),
     ],
-    check: (fs, session) => session.quizOk === true || session.history.some((h) => /(^|;|\s)true(\s|;|$)/.test(h) && session.quizOk !== false),
+    check: (fs, session) => session.quizOk === true,
   },
 
   // ── security depth ───────────────────────────────────────
@@ -312,7 +344,7 @@ export const gapLevels = [
         2
       ),
     ],
-    check: (fs, session) => session.quizOk === true || session.history.some((h) => /true/.test(h)),
+    check: (fs, session) => session.quizOk === true,
   },
 
   // ── network write ────────────────────────────────────────
@@ -379,7 +411,7 @@ export const gapLevels = [
         0
       ),
     ],
-    check: (fs, session) => session.quizOk === true || session.history.some((h) => /true/.test(h)),
+    check: (fs, session) => session.quizOk === true,
   },
 
   // ── more depth on weak pillars ────────────────────────────
@@ -529,12 +561,21 @@ export const gapLevels = [
       const n = fs.get('/home/ubuntu/ops.sh');
       if (!n) return false;
       const c = n.content || '';
-      return (
-        (n.mode & 0o100) !== 0 &&
-        /set\s+-e/.test(c) &&
-        /case\s/.test(c) &&
-        /while\s/.test(c)
+      const okStruct =
+        (n.mode & 0o100) !== 0 && /set\s+-e/.test(c) && /case\s/.test(c) && /while\s/.test(c);
+      if (!okStruct) return false;
+      const ran = { n: 0 };
+      runScript(
+        c,
+        {
+          exec: () => {
+            ran.n += 1;
+            return { stdout: '', stderr: '', code: 0 };
+          },
+        },
+        ['run']
       );
+      return ran.n > 0;
     },
   },
 ];

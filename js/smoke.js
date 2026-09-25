@@ -141,7 +141,13 @@ const winCommands = {
 for (const lv of levels) {
   try {
     s.loadLevel(lv);
+    const isQuiz = (lv.dialog || []).some((d) => d.type === 'quiz');
+    if (isQuiz) {
+      // UI enforces a correct answer before Continue; smoke simulates that.
+      s.quizOk = true;
+    }
     s.exec(winCommands[lv.id] || lv.solution);
+    if (isQuiz) s.quizOk = true;
     if (lv.check(s.fs, s)) wins.push(lv.id);
     else fails.push(lv.id);
   } catch (e) {

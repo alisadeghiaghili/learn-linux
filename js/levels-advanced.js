@@ -1189,7 +1189,7 @@ export const shellLevels = [
     ],
     check: (fs) => {
       const n = fs.get('/home/ubuntu/hello.sh');
-      return !!n && (n.mode & 0o100) !== 0 && (n.content || '').includes('echo hi');
+      return !!n && (n.mode & 0o100) !== 0 && /echo/.test(n.content || '');
     },
   },
   {

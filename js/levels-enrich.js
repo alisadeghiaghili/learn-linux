@@ -200,6 +200,41 @@ const DRILLS = {
 };
 
 /**
+ * Lab-manual block attached to every level.
+ * @param {any} level
+ */
+function labManual(level) {
+  const goal = level.objective || level.name;
+  const steps = (level.steps || []).map((s, i) => `${i + 1}. \`${s.command}\`${s.note ? ` — ${s.note}` : ''}`);
+  return {
+    type: 'modal',
+    title: `Lab — ${level.name}`,
+    body: [
+      '**Objective**',
+      goal,
+      '',
+      '**Procedure**',
+      steps.join('\n') || '1. Use the checklist in the right panel.',
+      '',
+      '**Verify**',
+      '- Check the filesystem tree / process table changed as expected.',
+      '- Re-read the error text if the command failed — do not retry blindly.',
+      '- State *why* the result is correct in one sentence before moving on.',
+      '',
+      '**Pitfalls**',
+      ...(level.mistakes || ['Skipping verification.', 'Typing before predicting the result.']).map(
+        (m) => `- ${m}`
+      ),
+      '',
+      '**If stuck**',
+      '- `hint` for the intended command shape.',
+      '- `reset` to restore the start state.',
+      '- `undo` to reverse the last change.',
+    ].join('\n'),
+  };
+}
+
+/**
  * Mutate the catalog in place with deeper pedagogy.
  * @param {any[]} levels
  */
@@ -222,6 +257,10 @@ export function enrichLevels(levels) {
       level.learn.push(
         'Exam/lab tip: state the expected result first, then type the command (predict → observe).'
       );
+    }
+    // Lab manual as the closing dialog step
+    if (!(level.dialog || []).some((d) => d.type === 'modal' && String(d.title || '').startsWith('Lab'))) {
+      level.dialog = [...(level.dialog || []), labManual(level)];
     }
     const hasQuiz = (level.dialog || []).some((d) => d.type === 'quiz');
     const drill = DRILLS[level.id];

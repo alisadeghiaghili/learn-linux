@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "start": "python -m http.server 5173",
-    "test": "node js/smoke.js && node js/smoke-bundle.js"
+    "test": "node js/smoke.js && node js/smoke-interp.js && node js/smoke-bundle.js"
   },
   "license": "Apache-2.0"
 }
