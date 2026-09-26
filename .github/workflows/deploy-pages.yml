@@ -27,6 +27,7 @@ jobs:
         run: |
           mkdir -p _site
           cp -r index.html css js _site/
+          cp -f favicon.svg favicon-32.png favicon-16.png apple-touch-icon.png _site/
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact

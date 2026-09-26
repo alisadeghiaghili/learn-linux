@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="learn-linux">
+  <rect width="64" height="64" rx="14" fill="#2C001E"/>
+  <rect x="4" y="4" width="56" height="56" rx="12" fill="#182029"/>
+  <text x="32" y="41" text-anchor="middle" font-family="Consolas, 'Cascadia Code', 'Ubuntu Mono', monospace" font-size="28" font-weight="700" fill="#E95420">$_</text>
+</svg>
