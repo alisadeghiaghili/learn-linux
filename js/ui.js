@@ -224,13 +224,31 @@ export class UI {
           <span id="mode-badge" class="badge">sandbox</span>
           <span id="level-title" class="level-title"></span>
         </div>
-        <div class="topbar-actions">
-          <button type="button" data-action="levels" class="btn">Levels</button>
-          <button type="button" data-action="sandbox" class="btn">Sandbox</button>
-          <button type="button" data-action="hint" class="btn">Hint</button>
-          <button type="button" data-action="steps" class="btn">Steps</button>
-          <button type="button" data-action="undo" class="btn">Undo</button>
-          <button type="button" data-action="reset" class="btn btn-accent">Reset</button>
+        <div class="toolbar-actions" id="toolbar-actions">
+          <div class="lang-menu">
+            <button type="button" class="lang-btn" data-action="lang-toggle" aria-haspopup="menu" aria-expanded="false">
+              <span data-lang-label>EN</span>
+              <span class="lang-caret" aria-hidden="true"></span>
+            </button>
+            <div class="lang-dropdown" id="lang-dropdown" hidden>
+              <button type="button" class="lang-option on" data-lang="en">EN</button>
+              <button type="button" class="lang-option" data-lang="fa">FA</button>
+              <button type="button" class="lang-option" data-lang="de">DE</button>
+            </div>
+          </div>
+          <button type="button" data-action="levels">Levels</button>
+          <button type="button" data-action="lesson">Lesson</button>
+          <button type="button" data-action="guide">Guide</button>
+          <button type="button" data-action="hint">Hint</button>
+          <button type="button" data-action="solution">Solution</button>
+          <button type="button" data-action="undo">Undo</button>
+          <button type="button" data-action="reset">Reset</button>
+          <button type="button" data-action="sandbox" class="ghost">Sandbox</button>
+          <button type="button" class="help-btn" data-action="help" title="Help" aria-label="Help">?</button>
+          <a class="tb-link gh" href="https://github.com/alisadeghiaghili/learn-linux" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub repository">
+            <svg class="gh-mark" viewBox="0 0 16 16" aria-hidden="true" width="18" height="18"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+          </a>
+          <a class="tb-link support" href="https://www.buymeacoffee.com/alisadeghil" target="_blank" rel="noopener noreferrer" title="Support">Buy me a coffee</a>
         </div>
       </header>
       <main class="main">
@@ -286,7 +304,35 @@ export class UI {
     };
 
     this.root.querySelectorAll('[data-action]').forEach((btn) => {
-      btn.addEventListener('click', () => this.onAction(btn.getAttribute('data-action')));
+      btn.addEventListener('click', (e) => {
+        const action = btn.getAttribute('data-action');
+        if (action === 'lang-toggle') e.stopPropagation();
+        this.onAction(action);
+      });
+    });
+    document.getElementById('lang-dropdown')?.querySelectorAll('[data-lang]').forEach((opt) => {
+      opt.addEventListener('click', () => {
+        const lang = opt.getAttribute('data-lang');
+        document.querySelectorAll('.lang-option').forEach((o) => o.classList.remove('on'));
+        opt.classList.add('on');
+        const label = document.querySelector('[data-lang-label]');
+        if (label) label.textContent = (lang || 'en').toUpperCase();
+        const dd = document.getElementById('lang-dropdown');
+        if (dd) dd.hidden = true;
+        this.printSystem(
+          lang === 'en'
+            ? 'UI language: English.'
+            : 'Language pack for ' + (lang || '').toUpperCase() + ' is not bundled yet — English content remains.'
+        );
+      });
+    });
+    document.addEventListener('click', (e) => {
+      const dd = document.getElementById('lang-dropdown');
+      const menu = document.querySelector('.lang-menu');
+      if (dd && menu && !menu.contains(/** @type {Node} */ (e.target))) {
+        dd.hidden = true;
+        document.querySelector('[data-action="lang-toggle"]')?.setAttribute('aria-expanded', 'false');
+      }
     });
 
     this.el.cmdline.addEventListener('keydown', (e) => this.onKey(e));
@@ -314,10 +360,66 @@ export class UI {
       this.printSystem('Sandbox mode. Free play — type `help` for commands.');
     }
     if (action === 'hint') this.printSystem(this.session.hint());
-    if (action === 'steps') this.printSystem(this.stepsText());
+    if (action === 'steps' || action === 'guide') {
+      if (action === 'guide') {
+        this.el.goalPanel?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        this.el.goalPanel?.classList.add('pulse');
+        setTimeout(() => this.el.goalPanel?.classList.remove('pulse'), 700);
+      }
+      this.printSystem(this.stepsText());
+    }
+    if (action === 'solution') {
+      const lv = this.session.level;
+      if (!lv?.solution) this.printSystem('No solution in sandbox. Open Levels first.');
+      else this.printSystem(`Solution: ${lv.solution}`);
+    }
+    if (action === 'lesson') {
+      if (this.session.level) this.showDialog(this.session.level);
+      else this.showAbout();
+    }
+    if (action === 'help') this.showHelp();
     if (action === 'undo') this.session.undo();
     if (action === 'reset') this.session.reset();
+    if (action === 'lang-toggle') this.toggleLang();
     this.focusInput();
+  }
+
+  toggleLang() {
+    const dd = document.getElementById('lang-dropdown');
+    const btn = document.querySelector('[data-action="lang-toggle"]');
+    if (!dd || !btn) return;
+    const open = !dd.hidden;
+    dd.hidden = open;
+    btn.setAttribute('aria-expanded', String(!open));
+  }
+
+  showAbout() {
+    this.openModal(`
+      <div class="modal-head"><h2>learn-linux</h2><button type="button" class="btn" data-close>Close</button></div>
+      <div class="modal-body">
+        <p>Interactive Ubuntu/Linux shell trainer with a live filesystem tree.</p>
+        <p>Open <strong>Levels</strong> for guided labs, or stay in <strong>Sandbox</strong>.</p>
+      </div>
+      <div class="modal-foot"><button type="button" class="btn btn-accent" data-close>OK</button></div>
+    `);
+    this.el.modalRoot.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', () => this.closeModal()));
+  }
+
+  showHelp() {
+    this.openModal(`
+      <div class="modal-head"><h2>Help</h2><button type="button" class="btn" data-close>Close</button></div>
+      <div class="modal-body">
+        <p><strong>Levels</strong> — pick a challenge.</p>
+        <p><strong>Lesson</strong> — replay the level intro.</p>
+        <p><strong>Guide</strong> — focus the goal checklist (right panel).</p>
+        <p><strong>Hint / Solution</strong> — nudge or reveal the intended commands.</p>
+        <p><strong>Undo / Reset</strong> — reverse or restart the level.</p>
+        <p><strong>Sandbox</strong> — free play.</p>
+        <p>Terminal: ↑/↓ history · Tab completes one word · <code>help</code> for commands.</p>
+      </div>
+      <div class="modal-foot"><button type="button" class="btn btn-accent" data-close>Got it</button></div>
+    `);
+    this.el.modalRoot.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', () => this.closeModal()));
   }
 
   stepsText() {

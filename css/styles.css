@@ -3,19 +3,21 @@
 :root {
   --bg: #1a0a14;
   --term: #2c001e;
-  --panel: #3d1230;
-  --panel-2: #4a183a;
-  --ink: #f4edeb;
-  --muted: #b89aa8;
+  --panel: #182029;
+  --panel-2: #22303c;
+  --ink: #e8eef4;
+  --muted: #8fa0b2;
+  --line: #2e3d4d;
   --accent: #e95420;
   --accent-soft: rgba(233, 84, 32, 0.18);
   --neon: #ff8c1a;
+  --remote: #f59e0b;
   --success: #38b26a;
   --danger: #e05a4f;
   --dir: #5b9bd5;
   --file: #f0c040;
   --exec: #c39bd3;
-  --border: rgba(244, 237, 235, 0.12);
+  --border: #2e3d4d;
   --mono: "Ubuntu Mono", "Cascadia Code", "Consolas", "Courier New", monospace;
   --sans: "Ubuntu", "Segoe UI", system-ui, -apple-system, sans-serif;
 }
@@ -44,12 +46,13 @@ body {
 .topbar {
   display: flex;
   align-items: center;
-  gap: 16px;
-  height: 52px;
-  padding: 0 16px;
-  background: linear-gradient(180deg, var(--panel) 0%, var(--term) 100%);
-  border-bottom: 1px solid var(--border);
+  gap: 12px;
+  min-height: 52px;
+  padding: 10px 14px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
   flex-shrink: 0;
+  flex-wrap: wrap;
 }
 
 .brand {
@@ -111,21 +114,191 @@ body {
   justify-content: flex-end;
 }
 
-.btn {
+.toolbar-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  position: relative;
+}
+
+.toolbar-actions button,
+.toolbar-actions .btn {
   appearance: none;
-  border: 1px solid var(--border);
-  background: transparent;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
   color: var(--ink);
+  border-radius: 8px;
+  padding: 7px 12px;
   font-family: var(--sans);
   font-size: 13px;
-  padding: 6px 12px;
-  border-radius: 6px;
   cursor: pointer;
+  min-height: 36px;
+  box-sizing: border-box;
+}
+
+.toolbar-actions button:hover,
+.toolbar-actions .btn:hover {
+  border-color: var(--muted);
+  background: #2a3a4a;
+}
+
+.lang-menu {
+  position: relative;
+  display: inline-flex;
+}
+
+.lang-btn {
+  min-width: 3.2rem !important;
+  min-height: 36px !important;
+  padding: 6px 10px !important;
+  font-size: 12px !important;
+  letter-spacing: 0.04em;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lang-caret {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid currentColor;
+  opacity: 0.7;
+}
+
+.lang-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 88px;
+  padding: 6px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+  z-index: 60;
+}
+
+.lang-dropdown:not([hidden]) {
+  display: flex;
+}
+
+.lang-option {
+  min-height: 36px;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  min-height: 36px !important;
+}
+
+.lang-option:hover {
+  background: var(--panel-2);
+}
+
+.lang-option.on {
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--line));
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+.help-btn {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px !important;
+  padding: 0 !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 8px !important;
+  background: transparent !important;
+  color: var(--ink) !important;
+  font-family: var(--sans) !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.help-btn:hover {
+  border-color: var(--muted) !important;
+  background: var(--panel-2) !important;
+}
+
+.tb-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 7px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  text-decoration: none;
+  font-family: var(--sans);
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.tb-link:hover {
+  border-color: var(--muted);
+  background: var(--panel-2);
+  text-decoration: none;
+}
+
+.tb-link.gh {
+  gap: 0;
+  justify-content: center;
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  padding: 0;
+}
+
+.tb-link .gh-mark {
+  display: block;
+  flex: 0 0 18px;
+}
+
+.tb-link.support {
+  border-color: color-mix(in srgb, var(--remote) 55%, var(--line));
+  color: #ffe6b0;
+  background: color-mix(in srgb, var(--remote) 14%, var(--panel-2));
+}
+
+.tb-link.support:hover {
+  background: color-mix(in srgb, var(--remote) 24%, var(--panel-2));
+}
+
+.btn {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: var(--panel-2);
+  color: var(--ink);
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-family: var(--sans);
+  font-size: 13px;
+  cursor: pointer;
+  min-height: 36px;
 }
 
 .btn:hover {
-  border-color: var(--accent);
-  color: var(--accent);
+  border-color: var(--muted);
+  background: #2a3a4a;
+  color: var(--ink);
 }
 
 .btn-accent {
@@ -138,6 +311,7 @@ body {
 .btn-accent:hover {
   filter: brightness(1.08);
   color: #fff;
+  background: var(--accent);
 }
 
 .btn-row {
@@ -340,6 +514,11 @@ body {
   overflow: auto;
   padding: 10px 12px;
   border-bottom: 1px solid var(--border);
+}
+
+.goal-panel.pulse {
+  box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--neon) 55%, transparent);
+  animation: neon-step 0.7s ease-in-out;
 }
 
 .goal-empty {
