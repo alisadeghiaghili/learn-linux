@@ -9,6 +9,14 @@ import { loadProgress, recordWin, summarizeCurriculum, nextLevelId } from './pro
 import { buildShareTargets, shareWithClipboard, SHARE_URL } from './share.js';
 import { launchConfetti, playFanfare } from './confetti.js';
 import { solutionProgress, currentStepIndex, solutionSteps } from './solution.js';
+import { getVisitorCount, getCachedVisitorCount } from './visitor.js';
+
+const VISITOR_TITLES = {
+  en: 'Unique learners who practiced here',
+  fa: 'تعداد یادگیرندگانی که اینجا تمرین کرده‌اند',
+  de: 'Lernende, die hier geübt haben',
+};
+const VISITOR_NUMBER_LOCALES = { en: 'en-US', fa: 'fa-IR', de: 'de-DE' };
 
 function esc(s) {
   return String(s)
@@ -245,6 +253,10 @@ export class UI {
           <button type="button" data-action="reset">Reset</button>
           <button type="button" data-action="sandbox" class="ghost">Sandbox</button>
           <button type="button" class="help-btn" data-action="help" title="Help" aria-label="Help">?</button>
+          <span class="tb-stat visitors" id="visitor-stat" title="${esc(VISITOR_TITLES.en)}" hidden>
+            <svg class="visitor-icon" viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0-2.21-2.69-4-6-4s-6 1.79-6 4v1h12v-1zm-1.07 0H3.07C3.56 11.83 5.48 11 8 11s4.44.83 4.93 2z"/></svg>
+            <span id="visitor-count">—</span>
+          </span>
           <a class="tb-link gh" href="https://github.com/alisadeghiaghili/learn-linux" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub repository">
             <svg class="gh-mark" viewBox="0 0 16 16" aria-hidden="true" width="18" height="18"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
           </a>
@@ -285,6 +297,8 @@ export class UI {
       <div id="modal-root"></div>
     `;
 
+    this.visitorLang = 'en';
+    this.visitorCount = getCachedVisitorCount();
     this.el = {
       term: document.getElementById('term'),
       prompt: document.getElementById('prompt'),
@@ -317,6 +331,8 @@ export class UI {
         opt.classList.add('on');
         const label = document.querySelector('[data-lang-label]');
         if (label) label.textContent = (lang || 'en').toUpperCase();
+        this.visitorLang = VISITOR_TITLES[lang] ? lang : 'en';
+        this.renderVisitorCount();
         const dd = document.getElementById('lang-dropdown');
         if (dd) dd.hidden = true;
         this.printSystem(
@@ -335,10 +351,34 @@ export class UI {
       }
     });
 
+    this.renderVisitorCount();
+    this.loadVisitorCount();
+
     this.el.cmdline.addEventListener('keydown', (e) => this.onKey(e));
     this.el.cmdline.addEventListener('input', () => this.syncGhost());
     this.el.term.addEventListener('click', () => this.focusInput());
     this.focusInput();
+  }
+
+  async loadVisitorCount() {
+    try {
+      const n = await getVisitorCount();
+      if (n !== null && Number.isFinite(n)) {
+        this.visitorCount = n;
+        this.renderVisitorCount();
+      }
+    } catch {
+      // offline or blocked: keep the placeholder
+    }
+  }
+
+  renderVisitorCount() {
+    const stat = document.getElementById('visitor-stat');
+    const count = document.getElementById('visitor-count');
+    if (!stat || !count || this.visitorCount === null) return;
+    stat.title = VISITOR_TITLES[this.visitorLang];
+    count.textContent = this.visitorCount.toLocaleString(VISITOR_NUMBER_LOCALES[this.visitorLang]);
+    stat.hidden = false;
   }
 
   focusInput() {

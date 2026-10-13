@@ -74,6 +74,7 @@ js/share.js            social share posts
 js/confetti.js         celebration
 js/solution.js         sticky checklist
 js/ui.js               terminal, tree, goal panel
+js/visitor.js          unique visitor counter (server-side count, once per browser)
 js/app.js              bootstrap
 ```
 
@@ -81,7 +82,13 @@ See [DESIGN.md](./DESIGN.md) for visual system and level model.
 
 ## Tests
 
-Core logic is pure ES modules. Quick smoke from Node (optional):
+Core logic is pure ES modules. Run the full suite (smoke checks plus the visitor counter tests, with `fetch` and `localStorage` mocked):
+
+```bash
+npm test
+```
+
+Quick smoke from Node (optional):
 
 ```bash
 node --input-type=module -e "

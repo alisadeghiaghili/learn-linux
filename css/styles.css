@@ -258,6 +258,30 @@ body {
   text-decoration: none;
 }
 
+.tb-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 13px;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+.tb-stat[hidden] {
+  display: none;
+}
+
+.tb-stat .visitor-icon {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
 .tb-link.gh {
   gap: 0;
   justify-content: center;
